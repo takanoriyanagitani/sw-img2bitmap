@@ -29,3 +29,23 @@ public func Bind<T, U>(
     }
   }
 }
+
+public func All<T>(_ ios: [IO<T>]) -> IO<[T]> {
+  return {
+    let sz: Int = ios.count
+
+    var arr: [T] = []
+    arr.reserveCapacity(sz)
+
+    for i in ios {
+      let res: Result<T, _> = i()
+
+      switch res {
+      case .failure(let err): return .failure(err)
+      case .success(let t): arr.append(t)
+      }
+    }
+
+    return .success(arr)
+  }
+}
